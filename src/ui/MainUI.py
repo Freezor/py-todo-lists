@@ -2,6 +2,8 @@
 import tkinter as tk
 from tkinter import messagebox
 
+from src.ui.ArchiveWindow import ArchiveWindow
+
 
 class MainUI:
     def __init__(self, todolist):
@@ -13,6 +15,10 @@ class MainUI:
         self.title_entry = tk.Entry(self.root, width = 40)
         self.desc_entry = tk.Entry(self.root, width = 40)
         self.task_listbox = tk.Listbox(self.root, height = 10, selectmode = tk.SINGLE)
+        tk.Button(self.root, text = "Archiv anzeigen", command = self.show_archive_window).grid(row = 6, column = 0,
+                                                                                                columnspan = 2,
+                                                                                                pady = 10,
+                                                                                                sticky = "ew")
 
         self.setup_ui()
 
@@ -72,3 +78,7 @@ class MainUI:
 
     def run(self):
         self.root.mainloop()
+
+    def show_archive_window(self):
+        archive_window = ArchiveWindow(self.todolist)
+        archive_window.mainloop()
