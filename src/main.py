@@ -5,5 +5,3 @@ if __name__ == "__main__":
     todo_list = ToDoList()
     gui_ui = MainUI(todo_list)
     gui_ui.run()
-
-#TODO: Save todos and archive in csv

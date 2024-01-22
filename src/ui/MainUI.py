@@ -9,9 +9,13 @@ class MainUI:
     def __init__(self, todolist):
         self.todolist = todolist
 
+        self.todolist.load_tasks()
+        self.todolist.load_archive()
+
         self.root = tk.Tk()
         self.root.title("ToDo-Liste")
 
+        self.root.geometry("600x800")
         self.title_entry = tk.Entry(self.root, width = 40)
         self.desc_entry = tk.Entry(self.root, width = 40)
         self.task_listbox = tk.Listbox(self.root, height = 10, selectmode = tk.SINGLE)

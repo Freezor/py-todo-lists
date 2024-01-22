@@ -13,7 +13,7 @@ class ArchiveWindow(tk.Toplevel):
 
         # Bind the window resizing event to the update_size function
         self.bind("<Configure>", self.update_size)
-        self.geometry("400x300")
+        self.geometry("600x300")
         self.show_archive()
 
     def show_archive(self):
