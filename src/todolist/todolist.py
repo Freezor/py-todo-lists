@@ -1,164 +1,84 @@
-from datetime import datetime
-import csv
+from src.todolist.ArchiveManager import ArchiveManager
+from src.todolist.TaskManager import TaskManager
 
 
 class ToDoList:
     """
-    ToDoList class represents a simple to-do list with task management functionality.
+    Class representing a to-do list with task and archive management.
 
-    :ivar tasks: List to store active tasks.
-    :ivar archive: List to store archived tasks.
-
+    :returns: None
     """
 
     def __init__(self):
         """
         Initializes an instance of ToDoList.
 
-        :return: None
+        :returns: None
         """
-        self.tasks = []
-        self.archive = []
+        self.task_manager = TaskManager()
+        self.archive_manager = ArchiveManager()
 
-    def add_task(self, title, description = None):
+    def add_task(self, title, description=None):
         """
-        Add a new task to the to-do list.
+        Adds a new task to the to-do list.
 
-        :param title: The title of the task.
-        :param description: (Optional) Description of the task.
-        :return: None
+        :param title: Title of the task.
+        :param description: Description of the task (optional).
+        :returns: None
         """
-        task = {"title": title, "description": description, "done": False, "created_at": datetime.now()}
-        self.tasks.append(task)
-        self.save_tasks()
+        self.task_manager.add_task(title, description)
+        self.task_manager.save_tasks()
 
     def show_tasks(self):
         """
-        Display the list of active tasks.
+        Retrieves a string representation of the current tasks.
 
-        :return: A string representation of active tasks.
+        :returns: A string containing the tasks and their details.
         """
-        if not self.tasks:
-            return "Keine Aufgaben vorhanden."
-        tasks_str = ""
-        for index, task in enumerate(self.tasks, start = 1):
-            status = "✔" if task["done"] else " "
-            created_at = task["created_at"].strftime("%Y-%m-%d %H:%M:%S")
-            tasks_str += f"{index}. [{status}] {task['title']} - {task['description']} (Erstellt am: {created_at})\n"
-        return tasks_str
+        return self.task_manager.show_tasks()
 
     def mark_as_done(self, task_index):
         """
-        Mark a specific task as done.
+        Marks a task as done.
 
-        :param task_index: The index of the task to mark as done.
-        :return: A message indicating the result of the operation.
+        :param task_index: Index of the task to be marked as done.
+        :returns: None
         """
-        if 1 <= task_index <= len(self.tasks):
-            self.tasks[task_index - 1]["done"] = True
-            self.save_tasks()
-            return f"Aufgabe {task_index} als erledigt markiert."
-        else:
-            return "Ungültiger Index. Bitte geben Sie einen gültigen Index ein."
+        self.task_manager.mark_as_done(task_index)
+        self.task_manager.save_tasks()
 
     def remove_task(self, task_index):
         """
-        Remove a task from the active list and move it to the archive.
+        Removes a task from the to-do list and archives it.
 
-        :param task_index: The index of the task to remove.
-        :return: A message indicating the result of the operation.
+        :param task_index: Index of the task to be removed.
+        :returns: None
         """
-        if 1 <= task_index <= len(self.tasks):
-            removed_task = self.tasks.pop(task_index - 1)
-            removed_task["deleted_at"] = datetime.now()
-            self.archive.append(removed_task)
-            self.save_tasks()
-            self.save_archive()
-            return f"Aufgabe {task_index} wurde entfernt."
-        else:
-            return "Ungültiger Index. Bitte geben Sie einen gültigen Index ein."
+        removed_task = self.task_manager.remove_task(task_index)
+        self.archive_manager.remove_and_archive_task(removed_task)
+        self.task_manager.save_tasks()
+        self.archive_manager.save_archive()
 
     def show_archive(self):
         """
-        Display the list of archived tasks.
+        Retrieves a string representation of the archived tasks.
 
-        :return: A string representation of archived tasks.
+        :returns: A string containing the archived tasks and their details.
         """
-        if not self.archive:
-            return "Archiv ist leer."
-        archive_str = ""
-        for index, task in enumerate(self.archive, start = 1):
-            deleted_at = task.get("deleted_at", "N/A")
-            deleted_at_str = deleted_at.strftime("%Y-%m-%d %H:%M:%S") if deleted_at != "N/A" else "N/A"
-            archive_str += f"{index}. {task['title']} - {task['description']} (Gelöscht am: {deleted_at_str})\n"
-        return archive_str
-
-    def save_tasks(self):
-        """
-        Save active tasks to the 'tasks.csv' file.
-
-        :return: None
-        """
-        with open('tasks.csv', 'w', newline = '') as csvfile:
-            fieldnames = ["title", "description", "done", "created_at"]
-            writer = csv.DictWriter(csvfile, fieldnames = fieldnames, delimiter = ';')
-            writer.writeheader()
-            writer.writerows(self.tasks)
+        return self.archive_manager.show_archive()
 
     def load_tasks(self):
         """
-        Load active tasks from the 'tasks.csv' file.
+        Loads tasks from the stored data.
 
-        :return: None
+        :returns: None
         """
-        try:
-            with open('tasks.csv', 'r') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter = ';')
-                for row in reader:
-                    self._handle_date_microseconds(row, 'created_at')
-                    self.tasks.append(dict(row))
-        except FileNotFoundError:
-            pass
-
-    def save_archive(self):
-        """
-        Save archived tasks to the 'archive.csv' file.
-
-        :return: None
-        """
-        with open('archive.csv', 'w', newline = '') as csvfile:
-            fieldnames = ["title", "description", "done", "created_at", "deleted_at"]
-            writer = csv.DictWriter(csvfile, fieldnames = fieldnames, delimiter = ';')
-            writer.writeheader()
-            writer.writerows(self.archive)
+        self.task_manager.load_tasks()
 
     def load_archive(self):
         """
-        Load archived tasks from the 'archive.csv' file.
+        Loads archived tasks from the stored data.
 
-        :return: None
+        :returns: None
         """
-        try:
-            with open('archive.csv', 'r') as csvfile:
-                reader = csv.DictReader(csvfile, delimiter = ';')
-                for row in reader:
-                    self._handle_date_microseconds(row, 'deleted_at')
-                    self.archive.append(dict(row))
-        except FileNotFoundError:
-            pass
-
-    @staticmethod
-    def _handle_date_microseconds(row, key):
-        """
-        Handle microseconds in the date string.
-
-        :param row: The dictionary containing the row data.
-        :param key: The key of the date field.
-        :return: None
-        """
-        date_string = row[key]
-        if '.' in date_string:
-            date_format = "%Y-%m-%d %H:%M:%S.%f"
-        else:
-            date_format = "%Y-%m-%d %H:%M:%S"
-        row[key] = datetime.strptime(date_string, date_format)
+        self.archive_manager.load_archive()
