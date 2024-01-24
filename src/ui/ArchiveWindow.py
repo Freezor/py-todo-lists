@@ -1,12 +1,11 @@
 import tkinter as tk
-from tkinter import messagebox
 
 
 class ArchiveWindow(tk.Toplevel):
     """
     Represents a window displaying the archive of a to-do list.
 
-    :param todolist: The to-do list object.
+    :param todo_list: The to-do list object.
     :returns: None
     """
 
@@ -21,8 +20,8 @@ class ArchiveWindow(tk.Toplevel):
         self.title("Archive")
         self.todo_list = todo_list
 
-        self.archive_text = tk.Text(self, height=10, width=40)
-        self.archive_text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+        self.archive_text = tk.Text(self, height = 10, width = 40)
+        self.archive_text.pack(expand = True, fill = tk.BOTH, padx = 10, pady = 10)
 
         # Bind the window resizing event to the update_size function
         self.bind("<Configure>", self.update_size)
@@ -37,7 +36,7 @@ class ArchiveWindow(tk.Toplevel):
         """
         archive_content = self.todo_list.show_archive()
         self.archive_text.insert(tk.END, archive_content)
-        self.archive_text.config(state=tk.DISABLED)  # Make the text widget read-only
+        self.archive_text.config(state = tk.DISABLED)  # Make the text widget read-only
 
     def update_size(self, event):
         """
@@ -46,4 +45,4 @@ class ArchiveWindow(tk.Toplevel):
         :param event: The resizing event.
         :returns: None
         """
-        self.archive_text.config(width=event.width // 8, height=event.height // 20)
+        self.archive_text.config(width = event.width // 8, height = event.height // 20)

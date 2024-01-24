@@ -1,6 +1,6 @@
 import csv
 from datetime import datetime
-from src.DateTimeUtils import DateTimeUtils
+from src.DateTimeUtils import parse_datetime_with_microseconds
 
 
 class TaskManager:
@@ -64,7 +64,7 @@ class TaskManager:
         if 1 <= task_index <= len(self.tasks):
             return self.tasks.pop(task_index - 1)
 
-    def save_tasks(self):
+    def  save_tasks(self):
         """
         Saves the tasks to a CSV file.
 
@@ -86,7 +86,8 @@ class TaskManager:
             with open('tasks.csv', 'r') as csvfile:
                 reader = csv.DictReader(csvfile, delimiter=';')
                 for row in reader:
-                    DateTimeUtils.handle_date_microseconds(row, 'created_at')
-                    self.tasks.append(dict(row))
+                    parse_datetime_with_microseconds(row, 'created_at')
+                    task = dict(row)
+                    self.tasks.append(task)
         except FileNotFoundError:
             pass

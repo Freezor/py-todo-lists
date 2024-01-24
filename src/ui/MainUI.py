@@ -8,7 +8,7 @@ class MainUI:
     """
     Represents the main user interface for a to-do list application.
 
-    :param todolist: The to-do list object.
+    :param todo_list: The to-do list object.
     :returns: None
     """
 

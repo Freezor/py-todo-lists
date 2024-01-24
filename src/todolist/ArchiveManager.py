@@ -1,6 +1,6 @@
 import csv
 from datetime import datetime
-from src.DateTimeUtils import DateTimeUtils
+from src.DateTimeUtils import parse_datetime_with_microseconds
 
 
 class ArchiveManager:
@@ -65,7 +65,7 @@ class ArchiveManager:
             with open('archive.csv', 'r') as csvfile:
                 reader = csv.DictReader(csvfile, delimiter = ';')
                 for row in reader:
-                    DateTimeUtils.handle_date_microseconds(row, 'deleted_at')
+                    parse_datetime_with_microseconds(row, 'deleted_at')
                     self.archive.append(dict(row))
         except FileNotFoundError:
             pass
