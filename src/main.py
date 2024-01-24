@@ -1,4 +1,4 @@
-from src.todolist.todolist import ToDoList
+from src.todolist.ToDoList import ToDoList
 from src.ui.MainUI import MainUI
 
 if __name__ == "__main__":
